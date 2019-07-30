@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Dynamic Quiz Project</title>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open Sans"/>
+  </head>
+  <body>
+  <div id='container'>
+      <div class="dropdown">
+  <button id="listQuestionDetails"  class="dropbtn">List Of Questions</button>
+  <div id="listQuestionsDropdown" class="dropdown-content">
+   
+  </div>
+</div>
+      <div id='title'>
+        <h1> Quiz </h1>
+      </div>
+        <br/>
+        <div id='quiz'></div>
+        <div class='button' id='back'><a href='#'>Back</a></div>
+        <div class='button' id='forward'><a href='#'>Forward</a></div>
+        <div class='button' id='start'> <a href='#'>Start Over</a></div>
+        <!-- <button class='' id='next'>Next</a></button>
+        <button class='' id='prev'>Prev</a></button>
+        <button class='' id='start'> Start Over</a></button> -->
+      </div>
+
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+   <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  
+  </body>
+</html>
+
+<style type="text/css">
+
+/* 
+List of question
+
+ */
+
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+
+.questionsContentCls , .listQuestionsDropdown{
+   background-color: #3498DB;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+
+/* End */
+  
+body {
+    font-family: Open Sans;
+}
+
+h1 {
+    text-align: center;
+}
+
+#title {
+    text-decoration: underline;
+}
+
+#quiz {
+    text-indent: 10px;
+    display:none;
+}
+
+.button {
+    border:4px solid;
+    border-radius:5px;
+    width: 40px;
+    padding-left:5px;
+    padding-right: 5px;
+    position: relative;
+    float:right;
+    background-color: #DCDCDC;
+    color: black;
+    margin: 0 2px 0 2px;
+}
+
+.button.active {
+    background-color: #F8F8FF;
+    color: #525252;
+}
+
+button {
+    position: relative;
+    float:right;
+}
+
+.button a {
+    text-decoration: none;
+    color: black;
+}
+
+#container {
+    width:50%;
+    margin:auto;
+    padding: 0 25px 40px 10px;
+    background-color: #1E90FF;
+    border:4px solid #B0E0E6;
+    border-radius:5px;
+    color: #FFFFFF;
+    font-weight: bold;
+    box-shadow: 5px 5px 5px #888;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#back {
+    display:none;
+}
+
+#start {
+    display:none;
+    width: 90px;
+}
+
+/*
+ 
+ Matching Following UI Styles
+
+*/
+.draggableDiv{
+  
+  padding: 0.5em;
+  x-border: 1px solid #000;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  //background-color: #fff;
+  margin: auto;
+  cursor: pointer;
+  position: relative;
+    z-index: 4;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+  }
+
+
+  .shadow {
+    -moz-box-shadow: 1px 2px 1px #999;
+    -webkit-box-shadow: 1px 2px 1px #999;
+    box-shadow: 1px 2px 1px #999; /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#cccccc')"; /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength = 4, Direction = 135, Color = '#cccccc');
+    border: 1px solid #777;
+}
+ul{
+      list-style-type: none;
+          margin: 0;
+}
+</style>
+
+
+<script type="text/javascript">
+  
+
+  var questions = [{
+  "questionType":"Matching",
+  "question":"match the following countries with their cities",
+  "correct":"1@1 2@2 3@3",
+  "choices":["INDIA@1 AUSTRLIA@2 ENGLAND@3","CANBERRA@2 LORDS@3 HYDERABAD@1"]
+},{"questionType":"Multiple Choice","question":"What is capital of India ?","correct":1.0,"choices":["Hyderabad","Delhi","Gujarath","Mumbai"]},{
+  "questionType":"Matching",
+  "question":"match the following Technologies with Developer ",
+  "correct":"1@2 2@3 3@4 4@1",
+  "choices":["JAVA@1 JavaScript@2 Spring@3 Hibernate@4","Red_Hat_Software@1 Brendan_Eich@3 Pivotal_Software@4 James_Gosling@2"]
+},
+{"questionType":"True or False ","question":"Java is object oriented programing language ?","correct":0.0,"choices":["True","False"]}
+];
+
+  //createQuestionElement(0);
+  var questionCounter = 0; //Tracks question number
+  var selections = []; //Array containing user choices
+  var quiz = $('#quiz'); //Quiz div object
+  
+  // Display initial question
+  
+  displayNext();
+  
+  // Click handler for the 'next' button
+  $('#forward').on('click', function (e) {
+    e.preventDefault();
+    
+    // Suspend click listener during fade animation
+    if(quiz.is(':animated')) {        
+      return false;
+    }
+    choose();
+    
+    // If no user selection, progress is stopped
+    if(questions[questionCounter].questionType === "check box" ){
+        var checkBQuestion = document.getElementsByName('answer');
+        var a4answers = new Array();
+        console.log("checkBQuestion @@@@@ "+checkBQuestion.length);
+        for (var i = 0;i < checkBQuestion.length ; i++) {
+           if (checkBQuestion[i].checked) {
+                  a4answers.push(checkBQuestion[i].value);
+                 
+              }    
+
+              selections[questionCounter] = a4answers;
+        }
+          console.log("a4answers @@@@@ "+a4answers.length);
+          //alert("questions[questionCounter].correct.length"+questions[questionCounter].correct.length);
+          var questionsLengthCheckBox =[];
+           questionsLengthCheckBox = ((questions[questionCounter].correct).split(" "));
+           console.log("questionsLengthCheckBox.length"+questionsLengthCheckBox.length);
+          if(!(a4answers.length === questionsLengthCheckBox.length)){
+                alert('Please make a selection!');
+              }
+               else {
+              questionCounter++;
+              displayNext();
+              }
+        console.log("selections[questionCounter] @@@@@ "+selections[questionCounter]);
+    }else if(questions[questionCounter].questionType === "Matching" ){
+        console.log("createMatchingTheFollowingUI");
+         var matchFollowingAnswersArray = new Array();
+         
+
+          var matchFollowingRowLength = $("#left .shadow  ").length;
+
+          var ulLength = $(".draggableItems.ui-sortable").children().length;
+
+          $('.draggableItems.ui-sortable li').each(function (index) {
+
+                console.log("Id "+$(this).children().attr('value'));
+                console.log("left value "+ $('#left'+index).attr("value")+"right value "+ $(this).children().attr('value'));
+                 matchFollowingAnswersArray.push($('#left'+index).attr("value")+"@"+$(this).children().attr('value')+"@"+$(this).children().text().trim());
+            });
+
+            selections[questionCounter] = matchFollowingAnswersArray;
+            console.log("matchFollowingAnswersArray @@@@ "+matchFollowingAnswersArray);
+          
+         /* 
+          for (var i = 0; i < matchFollowingRowLength; i++) {
+            $('#left'+i).attr("value");
+            $('#right'+i).attr("value");
+              console.log("left value "+ $('#left'+i).attr("value")+"right value "+ $('#right'+i).attr("value"));
+              matchFollowingAnswersArray.push();
+          }
+        */
+         questionCounter++;
+         displayNext();
+    }
+    else{
+       if (isNaN(selections[questionCounter])) {
+           alert('Please make a selection!');
+        } else {
+      questionCounter++;
+        displayNext();
+        }
+    }
+   
+  });
+  
+  // Click handler for the 'prev' button
+  $('#back').on('click', function (e) {
+    e.preventDefault();
+    
+    if(quiz.is(':animated')) {
+      return false;
+    }
+    choose();
+    questionCounter--;
+    displayNext();
+  });
+  
+  // Click handler for the 'Start Over' button
+  $('#start').on('click', function (e) {
+    e.preventDefault();
+    
+    if(quiz.is(':animated')) {
+      return false;
+    }
+    questionCounter = 0;
+    selections = [];
+    displayNext();
+    $('#start').hide();
+  });
+  
+  // Animates buttons on hover
+  $('.button').on('mouseenter', function () {
+    $(this).addClass('active');
+  });
+  $('.button').on('mouseleave', function () {
+    $(this).removeClass('active');
+  });
+  
+
+// create question details intially call
+$('#listQuestionDetails').click(function(){
+  $('#listQuestionsDropdown').empty();
+  for (var i = 0; i < questions.length; i++) {
+    //Things[i]
+    var questionListContent = $('<p id="questionId'+i+'" class ="questionsContentCls" index=" '+i+'" >'+questions[i].question+'</p></br>')
+    $('#listQuestionsDropdown').append(questionListContent);
+    //questions[index].choices.length
+  }
+  document.getElementById("listQuestionsDropdown").classList.toggle("show");
+
+  $('.questionsContentCls').click(function(){
+     // alert("Hi");
+      alert($(this).attr('index'));
+      
+      if(quiz.is(':animated')) {
+          return false;
+        }
+        //choose();
+        //questionCounter--;
+        questionCounter = $(this).attr('index');
+        createQuestionElement(questionCounter);
+        });
+});
+
+// 
+
+
+
+
+
+
+// Close the dropdown if the user clicks outside of it
+
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+} 
+
+
+  // Creates and returns the div that contains the questions and 
+  // the answer selections
+  function createQuestionElement(index) {
+    var qElement = $('<div>', {
+      id: 'question'
+    });
+    
+    
+    var question = $('<p>').append(questions[index].question);
+    qElement.append(question);
+
+    var radioButtons ;
+
+    //$('#questionList').append(question);
+    
+
+   /* if(questions[index].questionType === "Multiple Choice" ){
+      radioButtons = createRadios(index);
+      //qElement.append(radioButtons);
+    }
+    else if(questions[index].questionType === "True or False" ) {
+      radioButtons = createRadios(index);
+      //qElement.append(radioButtons);
+    }
+    else if(questions[index].questionType === "Fill in the blank" ){
+      radioButtons = createRadios(index);
+      //qElement.append(radioButtons);
+    }
+    */
+     if(questions[index].questionType === "check box" ){
+        console.log("Multiple Choice");
+        radioButtons = createCheckBoxes(index);
+       // qElement.append(radioButtons);
+    }else if(questions[index].questionType === "Matching" ){
+        console.log("createMatchingTheFollowingUI");
+        radioButtons = createMatchingTheFollowingUI(index);
+    }else{
+      console.log("Multiple Choice");
+      radioButtons = createRadios(index);
+    }
+    
+    qElement.append(radioButtons);
+
+    
+    return qElement;
+  }
+  
+  // Creates a list of the answer choices as radio inputs
+  function createRadios(index) {
+    var radioList = $('<ul>');
+    var item;
+    var input = '';
+    for (var i = 0; i < questions[index].choices.length; i++) {
+      item = $('<li>');
+      input = '<input type="radio" name="answer" value=' + i + ' />';
+      input += questions[index].choices[i];
+      item.append(input);
+      radioList.append(item);
+    }
+    return radioList;
+  }
+
+  function createCheckBoxes(index) {
+    var radioList = $('<ul>');
+    var item;
+    var input = '';
+    for (var i = 0; i < questions[index].choices.length; i++) {
+      item = $('<li>');
+      input = '<input type="checkbox" name="answer" value=' + i + ' />';
+      input += questions[index].choices[i];
+      item.append(input);
+      radioList.append(item);
+    }
+    return radioList;
+  }
+
+  // Match the following UI building
+
+  function createMatchingTheFollowingUI(index){
+
+      var matchingDataInformation =[];
+      var matchingFollowingMainDiv = $('<div>',{
+           id: 'mainDivForMatching',
+           class:'row'
+      });
+
+      // '<div id="left" style="z-index: 2;width: 50%;margin-left: 1%;/* margin-right: 1%; "></div><div id="right" style="z-index: 2;width: 47%;"></div>'
+
+      var matchFollowingRowLeftDiv = $('<div>',{
+           id: 'left',
+           style:'z-index: 2;width: 50%;margin-left: 1%;',
+           class:'col-sm-6'
+      });
+
+      var matchFollowingRowRightDiv = $('<div>',{
+           id: 'right',
+           style:'z-index: 2;width: 47%;',
+           class:'col-sm-6'
+      });
+
+
+
+      //alert(questions[index].choices.length);
+      for (var i = 0; i < questions[index].choices.length; i++) {
+
+          if(i===0){
+            var matchingTermsArray =[];
+          var matchingTerms = questions[index].choices[i];
+          matchingTermsArray = matchingTerms.split(" ");
+
+          //console.log("matchingTermsArray @@@ position "+i+" "+matchingTermsArray+" questions[index].choices[i]"+questions[index].choices[i]);
+          console.log("matchingTermsArray  length  @@@@@@ "+matchingTermsArray.length);
+            for (var j = 0; j < matchingTermsArray.length; j++) {
+                  var divisionMatchValue =[];
+                  var divisionMatchValue = matchingTermsArray[j].split("@")
+                  console.log(divisionMatchValue[0]);
+                 // <div  class="shadow draggableDiv" >
+                  matchFollowingRowLeftDiv.append('<div class="shadow draggableDiv" id="left'+j+'" value=' + divisionMatchValue[1] + '> '+divisionMatchValue[0]+'</div>');
+
+                }
+          }
+
+           if(i===1){
+            var matchinput = $('<ul>',{
+              class :'draggableItems ui-sortable'
+            })
+            var matchingTermsArray =[];
+          var matchingTerms = questions[index].choices[i];
+          matchingTermsArray = matchingTerms.split(" ");
+
+          //console.log("matchingTermsArray @@@ position "+i+" "+matchingTermsArray+" questions[index].choices[i]"+questions[index].choices[i]);
+          console.log("matchingTermsArray  length  @@@@@@ "+matchingTermsArray.length);
+            for (var j = 0; j < matchingTermsArray.length; j++) {
+                  var divisionMatchValue =[];
+                  var divisionMatchValue = matchingTermsArray[j].split("@")
+                  console.log(divisionMatchValue[0]);
+                  matchinput.append('<li><div class="shadow draggableDiv" id="right'+j+'" value='+divisionMatchValue[1]+' > '+divisionMatchValue[0]+'</div></li>');
+
+                }
+            matchFollowingRowRightDiv.append(matchinput);
+          }
+
+       /*    for (var j = 0; j < matchingTermsArray.length; j++) {
+                  var divisionMatchValue =[];
+                  var divisionMatchValue = matchingTermsArray[j].split("@")
+                  console.log(divisionMatchValue[0]);
+                 // $('#right').append('<div class="row"  style="background-color:yellow;">terms '+divisionMatchValue[0]+'</div>');
+
+                  matchingDataInformation.push('<div   style="background-color:green;"> '+divisionMatchValue[0]+'</div>');
+
+                }
+          */
+
+      }
+      matchingFollowingMainDiv.append(matchFollowingRowLeftDiv);
+      matchingFollowingMainDiv.append(matchFollowingRowRightDiv);
+      return matchingFollowingMainDiv;
+  }
+  
+  // Reads the user selection and pushes the value to an array
+  function choose() {
+    //console.log(" Enter inside choose ");
+    //alert(questions[questionCounter].question);
+    if(questions[questionCounter].questionType === "check box" ){
+      console.log(" Enter inside checkboxes ");
+       // alert(selections[questionCounter]);
+         console.log("selections "+ (isNaN(selections[questionCounter])));
+       // qElement.append(radioButtons);
+    }else if(questions[questionCounter].questionType === "Matching" ){
+      console.log(" Enter inside  Matching ");
+       // alert(selections[questionCounter]);
+         console.log("selections "+ (isNaN(selections[questionCounter])));
+       // qElement.append(radioButtons);
+    }else{
+      console.log("Choose others");
+      selections[questionCounter] = +$('input[name="answer"]:checked').val();
+    }
+    //selections[questionCounter] = +$('input[name="answer"]:checked').val();
+  }
+  
+  // Displays next requested element
+  function displayNext() {
+    quiz.fadeOut(function() {
+
+      $('#question').remove();
+      
+      if(questionCounter < questions.length){
+        var nextQuestion = createQuestionElement(questionCounter);
+        quiz.append(nextQuestion).fadeIn();
+
+        if(questions[questionCounter].questionType === "check box" ){
+             // selections[questionCounter] = questions[questionCounter].correct;
+
+             // alert(selections[questionCounter].length);
+
+              //alert("selections[questionCounter]"+isNaN(selections[questionCounter]));
+              //alert(isNaN(selections[questionCounter].length));
+              if (!(isNaN(selections[questionCounter]))) {
+                  for (var i = 0; i < selections[questionCounter].length; i++) {
+                     // alert(selections[questionCounter].length);
+                      if (!(isNaN(selections[questionCounter][i]))) {
+                        console.log("checkboxes"+selections[questionCounter][i]);
+                        console.log(selections[questionCounter][i]);
+                        $('input[value='+selections[questionCounter][i]+']').prop('checked', true);
+                      }
+                    }
+                }
+                /*
+              for (var i = 0; i < selections[questionCounter].length; i++) {
+                if (!(isNaN(selections[questionCounter][i]))) {
+                  $('input[value='+selections[questionCounter][i]+']').prop('checked', true);
+                }
+              }
+              */
+              
+        }else if(questions[questionCounter].questionType === "Matching" ){
+              //console.log("selections[questionCounter]"+selections[questionCounter]);
+              if (!(isNaN(selections[questionCounter]))) {
+              console.log("selections[questionCounter] length "+selections[questionCounter].length);
+               var answers = selections[questionCounter].split()
+                console.log("answers @@@@@@ "+answers);
+                console.log("Displays Next Location Reached ");
+              $('.draggableItems.ui-sortable li').each(function (index) {
+
+                 console.log("selections @@@@@@@ "+selections[questionCounter]);
+
+
+
+
+              });
+
+
+            }else if(!(selections[questionCounter]=== undefined || NaN) ){
+              console.log("selections[questionCounter] length "+selections[questionCounter]);
+
+                 var answers = selections[questionCounter];
+                console.log("answers @@@@@@ "+answers);
+                console.log("Displays Next Location Reached "+answers.length);
+              $('.draggableItems.ui-sortable li').each(function (index) {
+
+                 console.log("selections @@@@@@@ "+selections[questionCounter]);
+
+                 for (var i = 0; i < answers.length; i++) {
+                    answersValues = answers[i].split("@");
+                    console.log("answersValues"+answersValues);
+                    if(index == i){
+                      $(this).children().attr('value',answersValues[1])
+                      $(this).children().text(answersValues[2])
+                    }
+                 }
+
+
+
+              });
+            }else{
+
+            }
+        }
+        else{
+            if (!(isNaN(selections[questionCounter]))) {
+                console.log("others");
+                console.log(selections[questionCounter]);
+               $('input[value='+selections[questionCounter]+']').prop('checked', true);
+            }
+        }
+
+        
+        
+        // Controls display of 'prev' button
+        if(questionCounter === 1){
+          $('#back').show();
+        } else if(questionCounter === 0){
+          
+          $('#back').hide();
+          $('#forward').show();
+        }
+      }else {
+        var scoreElem = displayScore();
+        quiz.append(scoreElem).fadeIn();
+        $('#back').hide();
+        $('#forward').hide();
+        $('#start').show();
+      }
+
+      $("ul").sortable({
+         group: '#right',
+         pullPlaceholder: false,
+         containment:"#right",
+         //console.log("change occured");
+        });
+
+    });
+
+  }
+  
+  // Computes score and returns a paragraph element to be displayed
+  function displayScore() {
+    var score = $('<p>',{id: 'question'});
+    
+    var numCorrect = 0;
+    for (var i = 0; i < selections.length; i++) {
+      if(questions[i].questionType === "check box"){
+          var questionAnswersForCheckBox =questions[i].correct;
+
+            
+
+            var a=[];
+            a= questionAnswersForCheckBox.split(" ");
+            //alert(a.length);
+            var cheanswers = 0;
+        for (var j = 0; j < selections[i].length; j++) {
+          
+          console.log(" answers" + selections[i][j]+"a[i]"+a[j]);
+         if (selections[i][j] === a[j]) {
+            cheanswers++;
+              console.log(cheanswers);
+          }
+
+          if( cheanswers === a.length ){
+            numCorrect++;
+          }
+        }
+
+      }if(questions[i].questionType === "Matching"){
+          var matchingQuestionAnswers = questions[i].correct;
+          var a=[];
+          a = matchingQuestionAnswers.split(" ");
+
+          var matchedAnsescheck = 0;
+          console.log("selections[i]"+selections[i].length);
+          //console.log(selections[i][j]);
+      //var selectionsanswers = selections[i].split(",");
+          for (var j = 0; j < selections[i].length; j++) {
+              var sa = selections[i][j].split("@");
+              var ca = a[j].split("@");
+            //console.log("selectionsanswers "+ selections[i][j] +"\tcorrect answers"+a[j]);
+           // console.log(sa[0]+""+sa[2]);
+           // console.log("question left "+sa[0] +" "+ ca[0]+"question right "+sa[1] +" "+ ca[1]);
+           console.log((sa[0]===ca[0]) && (sa[1]===ca[1]));
+           if((sa[0]===ca[0]) && (sa[1]===ca[1])){
+              matchedAnsescheck++;
+           }
+           console.log(matchedAnsescheck === a.length);
+           if(matchedAnsescheck === a.length){
+
+              numCorrect++;
+              console.log("numCorrect"+numCorrect);
+           }
+
+          }
+          
+
+
+
+
+      }else{
+        if (selections[i] === questions[i].correct) {
+
+          numCorrect++;
+        }
+      }
+      
+    }
+    
+    var correctPoints = numCorrect * 2;
+
+    var correctPercentage = (numCorrect/questions.length) * 100;
+
+    var passingPoints =  ((80/100)* questions.length)* 2;
+    var passingPercentage = 80;
+    var passingScore = (100/questions.length)
+    var yourScore ='<p> Your Score :" '+correctPercentage+' %  ('+correctPoints+' points )"</p><br>';
+    var passingScore = '<p> Passing Score :" '+passingPercentage+' %  ('+passingPoints+' points)"</p><br>'
+    score.append(yourScore);
+    score.append(passingScore);
+
+    return score;
+  }
+
+
+
+$("ul").sortable({
+   group: '#right',
+   pullPlaceholder: false,
+   containment:"#right",
+   //console.log("change occured");
+});
+
+</script>
